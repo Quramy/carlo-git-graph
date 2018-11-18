@@ -1,0 +1,20 @@
+{
+  "name": "carlo-git-graph",
+  "version": "0.1.0",
+  "bin": {
+    "carlo-git-graph": "built/main.js"
+  },
+  "scripts": {
+    "prepare": "tsc"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^10.12.2",
+    "carlo": "^0.9.10",
+    "tiny-commit-walker": "^1.2.1"
+  },
+  "devDependencies": {
+    "gitgraph.js": "^1.13.0",
+    "typescript": "^3.1.6"
+  }
+}
