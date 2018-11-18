@@ -1,12 +1,19 @@
 {
   "name": "carlo-git-graph",
-  "version": "0.1.0",
+  "version": "0.1.3",
+  "description": "Sample Carlo application",
   "bin": {
     "carlo-git-graph": "built/main.js"
   },
   "scripts": {
     "prepare": "tsc"
   },
+  "author": "Quramy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Quramy/carlo-git-graph.git"
+  },
+  "homepage": "https://github.com/Quramy/carlo-git-graph",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^10.12.2",
