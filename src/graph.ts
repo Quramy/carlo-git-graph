@@ -12,7 +12,8 @@ function mapToJson<T>(map: Map<string, T>) {
 
 async function createGraph(repoPath: string) {
   const repo = new Repository(path.join(repoPath, ".git"));
-  const branches = await repo.readBranches();
+  // const branches = await repo.readBranches();
+  const lastCommit = await repo.readCommitByBranch("master");
 
   const commitMap: Map<string, CommitItem> = new Map();
   const rootMap: Map<string, string> = new Map();
@@ -20,10 +21,12 @@ async function createGraph(repoPath: string) {
 
   let bc = 0;
 
+  let afterTasks: (() => Promise<any>)[] = [];
   const traverseCommit = async (commit: Commit, bid: number, nextHash?: string, mergeTo?: number) => {
     while (true) {
       const prev = commitMap.get(commit.hash);
       if (nextHash && prev) {
+        console.log("found parent", prev.hash, nextHash);
         prev.checkoutHashList.push(nextHash);
         rootMap.set(bid + "", commit.hash);
         break;
@@ -44,26 +47,32 @@ async function createGraph(repoPath: string) {
       if (!commit.hasParents) {
         rootHashes.push(commit.hash);
         rootMap.set(bid + "", commit.hash);
+        await afterTasks.reduce((acc, t) => acc.then(() => t()), Promise.resolve());
+        afterTasks = [];
         break;
       }
       if (commit.isMergeCommit) {
-        await traverseCommit(commit.walkSync(0), bid, commit.hash);
-        await commit.mergedParentHashes.reduce(async (acc, h) => {
-          await acc;
-          await traverseCommit(commit.walkSync(h), ++bc, commit.hash, bid);
-        }, Promise.resolve());
-        break;
+        let mc = commit;
+        afterTasks.push(() => {
+          console.log("traverse merged branch", mc.hash);
+          return mc.mergedParentHashes.reduce(async (acc, h) => {
+            await acc;
+            await traverseCommit(mc.walkSync(h), ++bc, mc.hash, bid);
+          }, Promise.resolve())
+        });
       }
       nextHash = commit.hash;
-      commit = await commit.walk();
+      commit = await commit.walk(0);
     }
   };
 
-  await branches.reduce(async (acc, branch) => {
-    await acc;
-    let commit = branch.commit;
-    await traverseCommit(commit, 0);
-  }, Promise.resolve());
+  await traverseCommit(lastCommit, 0);
+
+  // await branches.reduce(async (acc, branch) => {
+  //   await acc;
+  //   let commit = branch.commit;
+  //   await traverseCommit(commit, 0);
+  // }, Promise.resolve());
 
   return { commitMap, rootHashes, rootMap };
 }
