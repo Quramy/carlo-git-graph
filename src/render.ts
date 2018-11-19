@@ -77,7 +77,7 @@ function render(commitGraphs: CommitGraphs) {
 
 async function main() {
   const commitGraphs = await fetchGraph();
-  // window["commitGraphs"] = commitGraphs;
+  (window as any)["commitGraphs"] = commitGraphs;
   console.log(commitGraphs);
   render(commitGraphs);
 }

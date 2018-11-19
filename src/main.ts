@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env nodl
 
 import path from "path";
 import { fetchGraph } from "./graph";

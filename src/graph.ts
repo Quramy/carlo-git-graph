@@ -77,9 +77,3 @@ export async function fetchGraph(repoPath: string): Promise<CommitGraphs> {
   }
 }
 
-// createGraph("/Users/yosuke/git/reg-suit").then(({ commitMap: x })=> {
-//   console.log(x.size);
-//   console.log(x.get("ddf5a4cdfda93c27a7cf2cfeae3c593ace19cacf"));
-//   const c = x.get("ddf5a4cdfda93c27a7cf2cfeae3c593ace19cacf");
-//   console.log(x.get(c!.checkoutHashList[0]));
-// });
